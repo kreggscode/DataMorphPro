@@ -452,6 +452,13 @@ body {
     color: rgba(255, 255, 255, 0.4);
 }
 
+/* Drag and drop styling */
+.data-textarea.drag-over {
+    border-color: rgba(102, 126, 234, 0.8);
+    background: rgba(102, 126, 234, 0.1);
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+}
+
 /* Action Buttons */
 .action-buttons {
     margin-top: 15px;

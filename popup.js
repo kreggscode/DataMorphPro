@@ -426,45 +426,87 @@ function fallbackCopyTextToClipboard(text) {
 }
 
 function handleFileUpload(event) {
-    const file = event.target.files[0];
-    if (!file) return;
+    const files = event.target.files;
+    if (!files || files.length === 0) return;
 
-    // Check file size (limit to 2MB for extension)
-    if (file.size > 2 * 1024 * 1024) {
-        showStatus('File too large. Please use a file smaller than 2MB.', 'error');
+    const file = files[0]; // Take the first file
+
+    // Check file size (limit to 5MB for extension)
+    if (file.size > 5 * 1024 * 1024) {
+        showStatus('File too large. Please use a file smaller than 5MB.', 'error');
         return;
     }
 
     // Check file type
     const validTypes = ['text/csv', 'text/plain', 'application/json', 'application/sql'];
-    if (!validTypes.includes(file.type) && !file.name.match(/\.(csv|json|sql|txt)$/i)) {
+    const isValidType = validTypes.includes(file.type) ||
+                       file.name.match(/\.(csv|json|sql|txt)$/i);
+
+    if (!isValidType) {
         showStatus('Please select a valid file type: CSV, JSON, SQL, or TXT.', 'error');
         return;
     }
 
     const reader = new FileReader();
+
     reader.onload = function(e) {
         try {
             const content = e.target.result;
-            if (content && content.trim()) {
+            if (content && content.trim().length > 0) {
                 inputText.value = content;
                 inputText.focus();
+                // Scroll to input area
+                inputText.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 showStatus(`File "${file.name}" loaded successfully!`, 'success');
             } else {
-                showStatus('File appears to be empty.', 'error');
+                showStatus('File appears to be empty or contains no readable content.', 'error');
             }
         } catch (error) {
-            showStatus('Error reading file content. Please try again.', 'error');
+            console.error('File read error:', error);
+            showStatus('Error reading file content. Please try again or paste content directly.', 'error');
         }
     };
+
     reader.onerror = function() {
         showStatus('Error reading file. Please try again or paste content directly.', 'error');
     };
 
+    reader.onabort = function() {
+        showStatus('File reading was cancelled.', 'error');
+    };
+
     try {
-        reader.readAsText(file);
+        // Use readAsText for all file types
+        reader.readAsText(file, 'UTF-8');
     } catch (error) {
-        showStatus('Unable to read file. Please paste content directly.', 'error');
+        console.error('FileReader error:', error);
+        showStatus('Unable to read file. Please paste content directly or try a different file.', 'error');
+    }
+}
+
+// Drag and Drop functionality
+function handleDragOver(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    inputText.classList.add('drag-over');
+}
+
+function handleDragLeave(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    inputText.classList.remove('drag-over');
+}
+
+function handleDrop(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    inputText.classList.remove('drag-over');
+
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+        // Simulate file input change event
+        const fakeEvent = { target: { files: files } };
+        handleFileUpload(fakeEvent);
     }
 }
 
@@ -472,8 +514,21 @@ function handleFileUpload(event) {
 convertBtn.addEventListener('click', convert);
 downloadBtn.addEventListener('click', download);
 copyBtn.addEventListener('click', copyToClipboard);
-uploadBtn.addEventListener('click', () => fileInput.click());
+uploadBtn.addEventListener('click', () => {
+    // Try multiple methods to trigger file input
+    try {
+        fileInput.click();
+    } catch (error) {
+        console.error('File input click failed:', error);
+        showStatus('Upload not available. Please drag and drop a file instead.', 'error');
+    }
+});
 fileInput.addEventListener('change', handleFileUpload);
+
+// Drag and drop listeners
+inputText.addEventListener('dragover', handleDragOver);
+inputText.addEventListener('dragleave', handleDragLeave);
+inputText.addEventListener('drop', handleDrop);
 
 // Auto-convert on input change (debounced)
 let convertTimeout;
