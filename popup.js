@@ -335,37 +335,68 @@ function download() {
     }
 
     try {
-        // Create blob with proper encoding
+        // For Chrome extensions, we need a more reliable download method
         const blob = new Blob([content], {
             type: mimeType + ';charset=utf-8'
         });
 
-        // Create download link
-        const url = URL.createObjectURL(blob);
+        // Use Chrome's download API if available (for extensions)
+        if (chrome && chrome.downloads) {
+            const url = URL.createObjectURL(blob);
+            chrome.downloads.download({
+                url: url,
+                filename: filename,
+                saveAs: false
+            }, function(downloadId) {
+                if (chrome.runtime.lastError) {
+                    console.error('Chrome download failed:', chrome.runtime.lastError);
+                    fallbackDownload(url, filename);
+                } else {
+                    showStatus(`✅ Downloaded as ${filename}`, 'success');
+                    URL.revokeObjectURL(url);
+                }
+            });
+        } else {
+            // Fallback to traditional method
+            fallbackDownload(URL.createObjectURL(blob), filename);
+        }
+
+    } catch (error) {
+        console.error('Download error:', error);
+        showStatus('Download failed. Please try copying the content instead.', 'error');
+    }
+}
+
+function fallbackDownload(url, filename) {
+    try {
         const a = document.createElement('a');
         a.href = url;
         a.download = filename;
         a.style.display = 'none';
+        a.target = '_blank';
 
-        // Append to body, click, and remove
         document.body.appendChild(a);
 
-        // Use a small delay to ensure the element is properly added
-        setTimeout(() => {
-            try {
-                a.click();
-                URL.revokeObjectURL(url);
-                document.body.removeChild(a);
-                showStatus(`Downloaded as ${filename}`, 'success');
-            } catch (clickError) {
-                URL.revokeObjectURL(url);
-                document.body.removeChild(a);
-                throw clickError;
-            }
-        }, 10);
+        // Force download by simulating click
+        const clickEvent = new MouseEvent('click', {
+            view: window,
+            bubbles: true,
+            cancelable: true
+        });
 
+        a.dispatchEvent(clickEvent);
+
+        // Clean up after a delay
+        setTimeout(() => {
+            URL.revokeObjectURL(url);
+            if (document.body.contains(a)) {
+                document.body.removeChild(a);
+            }
+        }, 100);
+
+        showStatus(`✅ Downloaded as ${filename}`, 'success');
     } catch (error) {
-        console.error('Download error:', error);
+        console.error('Fallback download failed:', error);
         showStatus('Download failed. Please try copying the content instead.', 'error');
     }
 }
@@ -378,49 +409,69 @@ function copyToClipboard() {
     }
 
     try {
-        // For Chrome extensions, we need to use the fallback method
-        // as the modern clipboard API might not work in extension popups
-        fallbackCopyTextToClipboard(content);
+        // Try multiple methods for maximum compatibility
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            // Modern clipboard API (may not work in extensions)
+            navigator.clipboard.writeText(content).then(() => {
+                showStatus('✅ Copied to clipboard!', 'success');
+            }).catch(() => {
+                fallbackCopyTextToClipboard(content);
+            });
+        } else {
+            // Fallback method for extensions
+            fallbackCopyTextToClipboard(content);
+        }
     } catch (error) {
-        showStatus('Copy failed. Please select and copy manually.', 'error');
+        console.error('Copy error:', error);
+        showStatus('Copy failed. Please select and copy the text manually.', 'error');
     }
 }
 
 function fallbackCopyTextToClipboard(text) {
-    // Create a temporary textarea for copying
-    const textArea = document.createElement('textarea');
-    textArea.value = text;
-    textArea.style.cssText = `
-        position: fixed;
-        left: -9999px;
-        top: -9999px;
-        opacity: 0;
-        pointer-events: none;
-        z-index: -1;
-    `;
-
     try {
+        // Create a more reliable textarea for copying
+        const textArea = document.createElement('textarea');
+        textArea.value = text;
+        textArea.style.cssText = `
+            position: absolute;
+            left: -9999px;
+            top: -9999px;
+            width: 1px;
+            height: 1px;
+            opacity: 0;
+            overflow: hidden;
+            z-index: -1;
+        `;
+
         document.body.appendChild(textArea);
 
-        // Select the text
-        textArea.focus();
+        // Modern selection approach
+        textArea.focus({ preventScroll: true });
         textArea.select();
         textArea.setSelectionRange(0, text.length);
 
-        // Try to copy
+        // Try the copy command
         const successful = document.execCommand('copy');
+
+        document.body.removeChild(textArea);
+
         if (successful) {
-            showStatus('Copied to clipboard!', 'success');
+            showStatus('✅ Copied to clipboard!', 'success');
         } else {
-            throw new Error('Copy command failed');
+            // Manual fallback - select the output text for user to copy
+            outputText.focus();
+            outputText.select();
+            showStatus('✅ Text selected! Press Ctrl+C (Cmd+C) to copy.', 'success');
         }
     } catch (error) {
         console.error('Copy failed:', error);
-        showStatus('Copy failed. Please select and copy the text manually.', 'error');
-    } finally {
-        // Clean up
-        if (document.body.contains(textArea)) {
-            document.body.removeChild(textArea);
+        // Manual fallback
+        try {
+            outputText.focus();
+            outputText.select();
+            showStatus('✅ Text selected! Press Ctrl+C (Cmd+C) to copy.', 'success');
+        } catch (selectError) {
+            showStatus('Copy failed. Please select and copy the text manually.', 'error');
         }
     }
 }
@@ -515,11 +566,31 @@ convertBtn.addEventListener('click', convert);
 downloadBtn.addEventListener('click', download);
 copyBtn.addEventListener('click', copyToClipboard);
 uploadBtn.addEventListener('click', () => {
-    // Try multiple methods to trigger file input
+    // For Chrome extensions, we need to use a more reliable approach
     try {
-        fileInput.click();
+        // Create a temporary file input if the hidden one doesn't work
+        const tempInput = document.createElement('input');
+        tempInput.type = 'file';
+        tempInput.accept = '.csv,.json,.sql,.txt';
+        tempInput.multiple = true;
+        tempInput.style.display = 'none';
+
+        // Handle file selection
+        tempInput.onchange = function(e) {
+            if (e.target.files && e.target.files[0]) {
+                handleFileUpload(e);
+                // Clean up
+                document.body.removeChild(tempInput);
+            }
+        };
+
+        document.body.appendChild(tempInput);
+
+        // Try to trigger the file dialog
+        tempInput.click();
+
     } catch (error) {
-        console.error('File input click failed:', error);
+        console.error('Upload failed:', error);
         showStatus('Upload not available. Please drag and drop a file instead.', 'error');
     }
 });
