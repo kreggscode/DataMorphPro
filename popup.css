@@ -179,6 +179,8 @@ body {
     width: 100% !important;
     flex-wrap: nowrap !important;
     max-width: 350px !important;
+    position: relative !important;
+    z-index: 100 !important;
 }
 
 .format-card {
@@ -584,22 +586,22 @@ body {
     }
 }
 
-@media (max-width: 400px) {
+@media (max-width: 300px) {
     body {
-        width: 350px;
+        width: 300px;
     }
 
     .popup-container {
-        padding: 15px;
+        padding: 10px;
     }
 
     .header-glass {
-        padding: 15px;
+        padding: 10px;
     }
 
     .format-cards {
         flex-direction: column !important;
-        gap: 15px;
+        gap: 10px;
     }
 
     .transform-arrow {
@@ -608,6 +610,6 @@ body {
 
     .data-section {
         grid-template-columns: 1fr !important;
-        gap: 15px;
+        gap: 10px;
     }
 }
