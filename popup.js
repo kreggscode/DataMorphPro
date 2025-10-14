@@ -316,53 +316,110 @@ function download() {
         case 'json':
         case 'beautify':
             mimeType = 'application/json';
+            filename = `converted.json`;
             break;
         case 'csv':
             mimeType = 'text/csv';
+            filename = `converted.csv`;
             break;
         case 'sql':
             mimeType = 'application/sql';
+            filename = `converted.sql`;
             break;
+        default:
+            mimeType = 'text/plain';
+            filename = `converted.txt`;
     }
 
-    const blob = new Blob([content], { type: mimeType });
-    const url = URL.createObjectURL(blob);
+    try {
+        const blob = new Blob([content], { type: mimeType });
+        const url = URL.createObjectURL(blob);
 
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        a.style.display = 'none';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
 
-    showStatus('File downloaded successfully!', 'success');
+        showStatus(`File downloaded as ${filename}`, 'success');
+    } catch (error) {
+        showStatus('Download failed. Please try copying the content instead.', 'error');
+    }
 }
 
 function copyToClipboard() {
     const content = outputText.value;
     if (!content) return;
 
-    navigator.clipboard.writeText(content).then(() => {
+    try {
+        // Try modern clipboard API first
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(content).then(() => {
+                showStatus('Copied to clipboard!', 'success');
+            }).catch(() => {
+                // Fallback to older method
+                fallbackCopyTextToClipboard(content);
+            });
+        } else {
+            // Fallback for older browsers
+            fallbackCopyTextToClipboard(content);
+        }
+    } catch (error) {
+        showStatus('Copy failed. Please select and copy manually.', 'error');
+    }
+}
+
+function fallbackCopyTextToClipboard(text) {
+    const textArea = document.createElement('textarea');
+    textArea.value = text;
+    textArea.style.position = 'fixed';
+    textArea.style.left = '-999999px';
+    textArea.style.top = '-999999px';
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+
+    try {
+        document.execCommand('copy');
         showStatus('Copied to clipboard!', 'success');
-    }).catch(() => {
-        showStatus('Failed to copy to clipboard', 'error');
-    });
+    } catch (error) {
+        showStatus('Copy failed. Please select and copy manually.', 'error');
+    }
+
+    document.body.removeChild(textArea);
 }
 
 function handleFileUpload(event) {
     const file = event.target.files[0];
     if (!file) return;
 
+    // Check file size (limit to 1MB for extension)
+    if (file.size > 1024 * 1024) {
+        showStatus('File too large. Please use a file smaller than 1MB.', 'error');
+        return;
+    }
+
     const reader = new FileReader();
     reader.onload = function(e) {
-        inputText.value = e.target.result;
-        showStatus(`File "${file.name}" loaded successfully!`, 'success');
+        try {
+            inputText.value = e.target.result;
+            showStatus(`File "${file.name}" loaded successfully!`, 'success');
+        } catch (error) {
+            showStatus('Error reading file content', 'error');
+        }
     };
     reader.onerror = function() {
-        showStatus('Error reading file', 'error');
+        showStatus('Error reading file. Please try again.', 'error');
     };
-    reader.readAsText(file);
+
+    try {
+        reader.readAsText(file);
+    } catch (error) {
+        showStatus('Unable to read file. Please paste content directly.', 'error');
+    }
 }
 
 // Event Listeners
