@@ -1,3 +1,135 @@
+/* Theme Toggle Button */
+.theme-toggle-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    padding: 8px 12px;
+    color: #ffffff;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.theme-toggle-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: scale(1.05);
+}
+
+.theme-toggle-btn:active {
+    transform: scale(0.95);
+}
+
+.theme-icon {
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+/* LIGHT THEME STYLES */
+body.light-theme {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 25%, #e0e6ff 50%, #f8f9ff 75%, #ffffff 100%);
+}
+
+body.light-theme .background {
+    background: linear-gradient(135deg, #e8f2ff 0%, #ffffff 25%, #f8f9ff 50%, #e0e6ff 75%, #f0f4ff 100%);
+}
+
+body.light-theme .gradient-sphere {
+    opacity: 0.3;
+}
+
+body.light-theme .header-glass,
+body.light-theme .input-card-glass,
+body.light-theme .output-card-glass {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+body.light-theme .header-glass::before {
+    background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.1), transparent);
+}
+
+body.light-theme .main-title,
+body.light-theme .tagline {
+    color: #2d3748;
+}
+
+body.light-theme .main-title {
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+body.light-theme .format-card {
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+body.light-theme .format-select,
+body.light-theme .data-textarea {
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    color: #2d3748;
+}
+
+body.light-theme .format-select:focus,
+body.light-theme .data-textarea:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+body.light-theme .upload-trigger,
+body.light-theme .output-action-btn {
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    color: #4a5568;
+}
+
+body.light-theme .upload-trigger:hover,
+body.light-theme .output-action-btn:hover {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+body.light-theme .action-btn.primary-btn {
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+body.light-theme .action-btn.primary-btn:hover {
+    background: linear-gradient(45deg, #5a67d8, #6b46c1);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+body.light-theme .status-display {
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    color: #2d3748;
+}
+
+body.light-theme .status-display.success {
+    border-color: #48bb78;
+    background: rgba(72, 187, 120, 0.1);
+}
+
+body.light-theme .status-display.error {
+    border-color: #f56565;
+    background: rgba(245, 101, 101, 0.1);
+}
+
+body.light-theme .status-display.info {
+    border-color: #4299e1;
+    background: rgba(66, 153, 225, 0.1);
+}
+
+body.light-theme .theme-toggle-btn {
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    color: #2d3748;
+}
+
+body.light-theme .theme-toggle-btn:hover {
+    background: rgba(0, 0, 0, 0.05);
+}
+
 /* Modern Glass Morphism Chrome Extension UI */
 * {
     margin: 0;

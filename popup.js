@@ -9,6 +9,43 @@ const downloadBtn = document.getElementById('download-btn');
 const copyBtn = document.getElementById('copy-btn');
 const fileInput = document.getElementById('file-input');
 const statusDiv = document.getElementById('status');
+const themeToggle = document.getElementById('theme-toggle');
+
+// Theme Toggle Functions
+function toggleTheme() {
+    const body = document.body;
+    const isDark = body.classList.contains('light-theme');
+
+    if (isDark) {
+        body.classList.remove('light-theme');
+        themeToggle.querySelector('.theme-icon').textContent = '🌙';
+        themeToggle.title = 'Toggle Dark/Light Mode';
+    } else {
+        body.classList.add('light-theme');
+        themeToggle.querySelector('.theme-icon').textContent = '☀️';
+        themeToggle.title = 'Toggle Light/Dark Mode';
+    }
+
+    // Save preference
+    chrome.storage.local.set({ theme: isDark ? 'dark' : 'light' });
+}
+
+function loadThemePreference() {
+    chrome.storage.local.get(['theme'], (result) => {
+        const theme = result.theme || 'dark';
+        const body = document.body;
+
+        if (theme === 'light') {
+            body.classList.add('light-theme');
+            themeToggle.querySelector('.theme-icon').textContent = '☀️';
+            themeToggle.title = 'Toggle Light/Dark Mode';
+        } else {
+            body.classList.remove('light-theme');
+            themeToggle.querySelector('.theme-icon').textContent = '🌙';
+            themeToggle.title = 'Toggle Dark/Light Mode';
+        }
+    });
+}
 
 // Conversion Functions
 function csvToJson(csv) {
@@ -628,3 +665,9 @@ inputType.addEventListener('change', () => {
         outputType.value = 'csv';
     }
 });
+
+// Initialize theme on load
+loadThemePreference();
+
+// Theme toggle event listener
+themeToggle.addEventListener('click', toggleTheme);
