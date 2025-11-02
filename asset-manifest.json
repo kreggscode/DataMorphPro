@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/DataFormatPro/static/css/main.43b24dae.css",
-    "main.js": "/DataFormatPro/static/js/main.f9260805.js",
+    "main.js": "/DataFormatPro/static/js/main.cfd6b56c.js",
     "static/js/453.f38d3b0f.chunk.js": "/DataFormatPro/static/js/453.f38d3b0f.chunk.js",
     "index.html": "/DataFormatPro/index.html",
     "main.43b24dae.css.map": "/DataFormatPro/static/css/main.43b24dae.css.map",
-    "main.f9260805.js.map": "/DataFormatPro/static/js/main.f9260805.js.map",
+    "main.cfd6b56c.js.map": "/DataFormatPro/static/js/main.cfd6b56c.js.map",
     "453.f38d3b0f.chunk.js.map": "/DataFormatPro/static/js/453.f38d3b0f.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.43b24dae.css",
-    "static/js/main.f9260805.js"
+    "static/js/main.cfd6b56c.js"
   ]
 }
