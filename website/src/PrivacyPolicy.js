@@ -8,6 +8,22 @@ function PrivacyPolicy() {
       <div className="policy-container">
         <header className="policy-header">
           <Link to="/" className="back-link">← Back to Converter</Link>
+          <div className="policy-logo">
+            <svg viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="policyLogoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+                  <stop offset="50%" style="stop-color:#764ba2;stop-opacity:1" />
+                  <stop offset="100%" style="stop-color:#f093fb;stop-opacity:1" />
+                </linearGradient>
+              </defs>
+              <circle cx="64" cy="64" r="60" fill="url(#policyLogoGradient)" stroke="#ffffff" strokeWidth="2" opacity="0.95"/>
+              <circle cx="64" cy="64" r="45" fill="none" stroke="#ffffff" strokeWidth="1.5" opacity="0.7"/>
+              <circle cx="64" cy="64" r="35" fill="none" stroke="#ffffff" strokeWidth="1.5" opacity="0.6"/>
+              <circle cx="64" cy="64" r="25" fill="none" stroke="#ffffff" strokeWidth="1.5" opacity="0.5"/>
+              <circle cx="64" cy="64" r="4" fill="#ffffff" opacity="1"/>
+            </svg>
+          </div>
           <h1>Privacy Policy</h1>
           <p className="policy-date">Last updated: October 14, 2025</p>
         </header>
@@ -15,7 +31,7 @@ function PrivacyPolicy() {
         <section className="policy-section">
           <h2>1. Information We Collect</h2>
           <p>
-            CSV JSON SQL Converter is a client-side web application that processes data entirely within your browser.
+            DataMorphPro is a client-side web application that processes data entirely within your browser.
             We do not collect, store, or transmit any personal information or data that you upload or convert.
           </p>
           <ul>

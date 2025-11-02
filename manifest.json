@@ -1,18 +1,17 @@
 {
   "manifest_version": 3,
-  "name": "DataMorph Pro - Format Converter",
+  "name": "DataMorphPro",
   "version": "1.0",
   "description": "Transform data formats with stunning visual effects. Convert CSV ↔ JSON ↔ SQL instantly with dark mode, drag & drop, and more!",
   "permissions": [
     "activeTab",
     "storage",
-    "tabs",
     "clipboardWrite",
     "downloads"
   ],
   "action": {
     "default_popup": "popup.html",
-    "default_title": "DataMorph Pro - Transform Your Data",
+    "default_title": "DataMorphPro - Transform Your Data",
     "default_icon": {
       "16": "icons/icon16.png",
       "32": "icons/icon32.png",

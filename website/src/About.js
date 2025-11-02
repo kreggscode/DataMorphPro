@@ -15,24 +15,19 @@ function About() {
         <section className="about-hero">
           <div className="hero-content">
             <div className="hero-icon">
-              <svg width="80" height="80" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+              <svg viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
                 <defs>
                   <linearGradient id="aboutBgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
-                    <stop offset="50%" style="stop-color:#764ba2;stop-opacity:1" />
-                    <stop offset="100%" style="stop-color:#f093fb;stop-opacity:1" />
-                  </linearGradient>
-                  <linearGradient id="aboutArrowGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" style="stop-color:#ffffff;stop-opacity:0.9" />
-                    <stop offset="100%" style="stop-color:#ffffff;stop-opacity:1" />
+                    <stop offset="0%" stopColor="#667eea" stopOpacity={1} />
+                    <stop offset="50%" stopColor="#764ba2" stopOpacity={1} />
+                    <stop offset="100%" stopColor="#f093fb" stopOpacity={1} />
                   </linearGradient>
                 </defs>
-                <circle cx="64" cy="64" r="60" fill="url(#aboutBgGradient)" stroke="#ffffff" stroke-width="2" opacity="0.95"/>
-                <path d="M 25 45 L 45 35 L 45 45 L 25 55 Z" fill="url(#aboutArrowGradient)"/>
-                <circle cx="20" cy="50" r="3" fill="#ffffff" opacity="0.8"/>
-                <circle cx="50" cy="40" r="3" fill="#ffffff" opacity="0.8"/>
-                <circle cx="64" cy="64" r="8" fill="none" stroke="#ffffff" stroke-width="2" opacity="0.9"/>
-                <circle cx="64" cy="64" r="4" fill="#ffffff" opacity="0.95"/>
+                <circle cx="64" cy="64" r="60" fill="url(#aboutBgGradient)" stroke="#ffffff" strokeWidth="2" opacity="0.95"/>
+                <circle cx="64" cy="64" r="45" fill="none" stroke="#ffffff" strokeWidth="1.5" opacity="0.7"/>
+                <circle cx="64" cy="64" r="35" fill="none" stroke="#ffffff" strokeWidth="1.5" opacity="0.6"/>
+                <circle cx="64" cy="64" r="25" fill="none" stroke="#ffffff" strokeWidth="1.5" opacity="0.5"/>
+                <circle cx="64" cy="64" r="4" fill="#ffffff" opacity="1"/>
               </svg>
             </div>
             <h2>What We Do</h2>

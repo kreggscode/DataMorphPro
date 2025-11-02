@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import './App.css';
 import PrivacyPolicy from './PrivacyPolicy';
 import TermsOfService from './TermsOfService';
@@ -103,35 +103,6 @@ function Converter() {
     }
   };
 
-  const csvToSql = (csv, tableName = 'converted_table') => {
-    try {
-      const json = JSON.parse(csvToJson(csv));
-      if (!Array.isArray(json) || json.length === 0) {
-        throw new Error('No data to convert');
-      }
-
-      const headers = Object.keys(json[0]);
-      const columns = headers.map(header => `"${header}" TEXT`).join(', ');
-
-      let sql = `CREATE TABLE IF NOT EXISTS "${tableName}" (${columns});\n\n`;
-
-      json.forEach(row => {
-        const values = headers.map(header => {
-          const value = row[header];
-          if (value === null || value === undefined) {
-            return 'NULL';
-          }
-          return `'${String(value).replace(/'/g, "''")}'`;
-        });
-        sql += `INSERT INTO "${tableName}" (${headers.map(h => `"${h}"`).join(', ')}) VALUES (${values.join(', ')});\n`;
-      });
-
-      return sql.trim();
-    } catch (error) {
-      throw new Error(`CSV to SQL conversion failed: ${error.message}`);
-    }
-  };
-
   const jsonToSql = (json, tableName = 'converted_table') => {
     try {
       const data = JSON.parse(json);
@@ -222,15 +193,6 @@ function Converter() {
     return values;
   };
 
-  const sqlToCsv = (sql) => {
-    try {
-      const json = sqlToJson(sql);
-      return jsonToCsv(json);
-    } catch (error) {
-      throw new Error(`SQL to CSV conversion failed: ${error.message}`);
-    }
-  };
-
   const handleConvert = async () => {
     if (!inputText.trim()) {
       setStatus('Please enter some data to convert');
@@ -261,6 +223,8 @@ function Converter() {
           case 'sql':
             jsonIntermediate = sqlToJson(inputText);
             break;
+          default:
+            throw new Error('Invalid input type');
         }
 
         switch (outputType) {
@@ -273,6 +237,8 @@ function Converter() {
           case 'sql':
             result = jsonToSql(jsonIntermediate);
             break;
+          default:
+            throw new Error('Invalid output type');
         }
       }
 
@@ -315,6 +281,8 @@ function Converter() {
       case 'sql':
         mimeType = 'application/sql';
         break;
+      default:
+        mimeType = 'text/plain';
     }
 
     const blob = new Blob([outputText], { type: mimeType });
@@ -541,7 +509,7 @@ function Footer() {
 
 function App() {
   return (
-    <Router>
+    <Router basename="/DataMorphPro">
       <Routes>
         <Route path="/" element={<Converter />} />
         <Route path="/about" element={<About />} />
