@@ -4,9 +4,7 @@
   "version": "1.0",
   "description": "Transform data formats with stunning visual effects. Convert CSV ↔ JSON ↔ SQL instantly with dark mode, drag & drop, and more!",
   "permissions": [
-    "activeTab",
     "storage",
-    "clipboardWrite",
     "downloads"
   ],
   "action": {
